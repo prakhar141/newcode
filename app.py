@@ -12,7 +12,7 @@ with header_col1:
     st.image("bank.png", width=80)  # Adjust width as needed
 
 with header_col2:
-    st.title("🏫 ICICI Bank Ltd-Education Loan")
+    st.title("ICICI Bank Ltd-Education Loan")
     st.subheader("Institute Category Search")
 
 # --- Load Excel ---
