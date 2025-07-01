@@ -92,22 +92,13 @@ st.header("📊 Matching Results")
 
 if not filtered.empty and any(user_selections.values()):
     st.success(f"✅ Found {filtered.shape[0]} matching record(s).")
-
-    # Wrap long text and align content for readability
-    styled_df = filtered[actual_output_cols].style.set_properties(**{
-        'white-space': 'pre-wrap',
-        'text-align': 'left',
-        'font-size': '14px',
-        'line-height': '1.8'
-    })
-
-    # Display as full table without scroll bars
-    st.dataframe(styled_df, use_container_width=True)
+    st.dataframe(filtered[actual_output_cols], use_container_width=True)
 
 elif any(user_selections.values()):
     st.warning("⚠️ No matching records found.")
 else:
     st.info("Enter at least one field above to begin your search.")
+
 # --- Footer ---
 st.markdown("""
 <style>
