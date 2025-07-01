@@ -51,6 +51,7 @@ st.markdown("""
 2. **Select from suggestions** if shown, or press Enter to search manually.
 3. The table will display matched results including Unique Code, Location, Category, Course, and Repayment info.
 
+> ℹ️ For cities listed as NA, type `0` in the **City** box.
 """)
 
 user_selections = {}
@@ -88,12 +89,22 @@ for col, val in user_selections.items():
             filtered = filtered.iloc[0:0]
 
 # --- Display Results ---
+# --- Display Results ---
 st.divider()
 st.header("📊 Matching Results")
 
 if not filtered.empty and any(user_selections.values()):
     st.success(f"✅ Found {filtered.shape[0]} matching record(s).")
-    st.dataframe(filtered[actual_output_cols], use_container_width=True)
+
+    # --- Format long text columns like Course / Stream ---
+    styled_df = filtered[actual_output_cols].style.set_properties(**{
+        'white-space': 'pre-wrap',
+        'text-align': 'left',
+        'font-size': '14px'
+    })
+
+    # Display with horizontal scroll if needed
+    st.dataframe(styled_df, use_container_width=True, height=min(600, 70 + 35 * filtered.shape[0]))
 
 elif any(user_selections.values()):
     st.warning("⚠️ No matching records found.")
