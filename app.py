@@ -26,10 +26,12 @@ def load_data():
 df = load_data()
 
 # --- Input & Output Columns ---
-input_cols = ["Unique Code", "Institute name", "City"]
+# --- Input & Output Columns ---
+input_cols = ["Institute name", "City"]  # ✅ Removed "Unique Code" from input
 last_col_name = df.columns[-1]  # Get Repayment dynamically
 
 output_col_map = {
+    "Unique Code": "Unique Code",            # ✅ Added it to output
     "State / Country": "State / Country",
     "Course / Stream": "Course / Stream",
     "Category": "Category",
@@ -37,7 +39,6 @@ output_col_map = {
 }
 output_cols_ui = list(output_col_map.keys())
 actual_output_cols = [output_col_map[c] for c in output_cols_ui if output_col_map[c] in df.columns]
-
 # --- Live Suggestion Inputs ---
 st.header("🔍 How To Search")
 
