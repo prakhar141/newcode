@@ -86,7 +86,6 @@ for col, val in user_selections.items():
             filtered = filtered.iloc[0:0]
 
 # --- Display Results ---
-# --- Display Results ---
 st.divider()
 st.header("📊 Matching Results")
 
