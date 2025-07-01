@@ -7,7 +7,7 @@ st.set_page_config(page_title="Institute Finder", layout="wide")
 
 # --- Header ---
 st.title("🏫 Institute Live Search")
-st.subheader("Find institutes with smart autofill, fuzzy search, and repayment info")
+st.subheader("Institute Category Search")
 
 # --- Load Excel ---
 @st.cache_data
