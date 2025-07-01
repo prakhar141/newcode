@@ -2,18 +2,21 @@ import streamlit as st
 import pandas as pd
 from rapidfuzz import process, fuzz
 
-# --- Setup Page ---
-st.set_page_config(page_title="Institute Finder", layout="wide")
-
-# --- Header with Image ---
-header_col1, header_col2 = st.columns([0.1, 0.9])  # Adjust width ratio as needed
+# --- Header with spacing using columns and CSS ---
+header_col1, header_col2 = st.columns([0.1, 0.9])  # Adjust as needed
 
 with header_col1:
-    st.image("bank.png", width=80)  # Adjust width as needed
+    st.image("bank.png", width=80)
 
 with header_col2:
-    st.title("ICICI Bank Ltd-Education Loan")
-    st.subheader("Institute Category Search")
+    st.markdown(
+        """
+        <div style='padding-left: 15px;'>
+            <h1>🏫 ICICI Bank Ltd-Education Loan</h1>
+            <h3>Institute Category Search</h3>
+        </div>
+        """, unsafe_allow_html=True
+    )
 
 # --- Load Excel ---
 @st.cache_data
@@ -37,6 +40,33 @@ actual_output_cols = [output_col_map[c] for c in output_cols_ui if output_col_ma
 
 # --- Live Suggestion Inputs ---
 st.header("🔍 How To Search")
+
+# ✅ Instructions block
+st.markdown("""
+#### 📝 Steps to Search:
+
+1. **Write Institute Name**, Unique Code, or City in the respective boxes.
+
+2. **Check Suggestions** shown below each box.
+   - If suggestions appear, select the correct one.
+   - If no suggestion appears, your input will be used as-is.
+
+3. You can **fill one or multiple fields** — more fields improve matching accuracy.
+
+4. The table below will show matching institute(s) with:
+   - State / Country
+   - Course / Stream
+   - Category
+   - Repayment Info
+
+5. If no match is found, try:
+   - Typing fewer words
+   - Using simpler spellings
+   - Checking for typos
+
+> ℹ️ For missing cities (like NA), type `0` in the **City** field.
+""")
+
 user_selections = {}
 cols = st.columns(3)
 
