@@ -96,15 +96,16 @@ st.header("📊 Matching Results")
 if not filtered.empty and any(user_selections.values()):
     st.success(f"✅ Found {filtered.shape[0]} matching record(s).")
 
-    # --- Format long text columns like Course / Stream ---
+    # Wrap long text and align content for readability
     styled_df = filtered[actual_output_cols].style.set_properties(**{
         'white-space': 'pre-wrap',
         'text-align': 'left',
-        'font-size': '14px'
+        'font-size': '14px',
+        'line-height': '1.8'
     })
 
-    # Display with horizontal scroll if needed
-    st.dataframe(styled_df, use_container_width=True, height=min(600, 70 + 35 * filtered.shape[0]))
+    # Display as full table without scroll bars
+    st.dataframe(styled_df, use_container_width=True)
 
 elif any(user_selections.values()):
     st.warning("⚠️ No matching records found.")
