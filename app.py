@@ -30,7 +30,7 @@ output_cols_ui = list(output_col_map.keys())
 actual_output_cols = [output_col_map[c] for c in output_cols_ui if output_col_map[c] in df.columns]
 
 # --- Live Suggestion Inputs ---
-st.header("🔍 Search Criteria")
+st.header("🔍 How To Search")
 user_selections = {}
 cols = st.columns(3)
 
