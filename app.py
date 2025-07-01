@@ -4,19 +4,10 @@ from rapidfuzz import process, fuzz
 
 # --- Setup Page ---
 st.set_page_config(page_title="Institute Finder", layout="wide")
-st.markdown("""
-    <style>
-    .title { font-size: 36px; font-weight: 700; color: #003262; margin-bottom: 0.2em; }
-    .subtitle { font-size: 18px; color: #666666; margin-bottom: 2em; }
-    .searchbox label { font-weight: 600; color: #1a1a1a; }
-    .stDataFrame div { white-space: normal !important; }
-    footer { visibility: hidden; }
-    </style>
-""", unsafe_allow_html=True)
 
 # --- Header ---
-st.markdown('<div class="title">🏫 Institute Live Search</div>', unsafe_allow_html=True)
-st.markdown('<div class="subtitle">Find institutes with smart autofill, fuzzy search, and repayment info</div>', unsafe_allow_html=True)
+st.title("🏫 Institute Live Search")
+st.subheader("Find institutes with smart autofill, fuzzy search, and repayment info")
 
 # --- Load Excel ---
 @st.cache_data
@@ -39,7 +30,7 @@ output_cols_ui = list(output_col_map.keys())
 actual_output_cols = [output_col_map[c] for c in output_cols_ui if output_col_map[c] in df.columns]
 
 # --- Live Suggestion Inputs ---
-st.markdown("### 🔍 Search Criteria")
+st.header("🔍 Search Criteria")
 user_selections = {}
 cols = st.columns(3)
 
@@ -74,48 +65,13 @@ for col, val in user_selections.items():
         else:
             filtered = filtered.iloc[0:0]
 
-# --- Styled Result Display ---
-st.markdown("---")
-st.markdown("### 📊 Matching Results")
+# --- Display Results ---
+st.divider()
+st.header("📊 Matching Results")
 
 if not filtered.empty and any(user_selections.values()):
     st.success(f"✅ Found {filtered.shape[0]} matching record(s).")
-
-    styled_df = filtered[actual_output_cols].copy()
-
-    # Wrap long course descriptions
-    styled_df["Course / Stream"] = styled_df["Course / Stream"].astype(str).apply(
-        lambda x: f"<div style='white-space: pre-wrap; word-break: break-word'>{x}</div>"
-    )
-
-    # Modern Table Styling
-    st.markdown("""
-        <style>
-        table {
-            border-collapse: collapse;
-            width: 100%;
-            font-size: 15px;
-        }
-        th, td {
-            text-align: left;
-            padding: 12px;
-            border: 1px solid #ddd;
-        }
-        th {
-            background-color: #f5f5f5;
-            color: #222;
-        }
-        tr:nth-child(even) {
-            background-color: #f9f9f9;
-        }
-        tr:hover {
-            background-color: #f1f1f1;
-        }
-        </style>
-    """, unsafe_allow_html=True)
-
-    # Display HTML table
-    st.write(styled_df.to_html(escape=False, index=False), unsafe_allow_html=True)
+    st.dataframe(filtered[actual_output_cols], use_container_width=True)
 
 elif any(user_selections.values()):
     st.warning("⚠️ No matching records found.")
