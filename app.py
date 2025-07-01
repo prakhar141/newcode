@@ -26,12 +26,12 @@ def load_data():
 df = load_data()
 
 # --- Input & Output Columns ---
-# --- Input & Output Columns ---
-input_cols = ["Institute name", "City"]  # ✅ Removed "Unique Code" from input
-last_col_name = df.columns[-1]  # Get Repayment dynamically
+input_cols = ["Institute name", "City"]  # ✅ Only these are now inputs
+last_col_name = df.columns[-1]  # Repayment column
 
+# ✅ Output includes Unique Code now
 output_col_map = {
-    "Unique Code": "Unique Code",            # ✅ Added it to output
+    "Unique Code": "Unique Code",
     "State / Country": "State / Country",
     "Course / Stream": "Course / Stream",
     "Category": "Category",
@@ -39,6 +39,7 @@ output_col_map = {
 }
 output_cols_ui = list(output_col_map.keys())
 actual_output_cols = [output_col_map[c] for c in output_cols_ui if output_col_map[c] in df.columns]
+
 # --- Live Suggestion Inputs ---
 st.header("🔍 How To Search")
 
@@ -46,11 +47,15 @@ st.header("🔍 How To Search")
 st.markdown("""
 #### 📝 Steps to Search:
 
-1. **Write Institute Name**
+1. **Write Institute Name** and/or **City** in the input boxes below.
+2. **Select from suggestions** if shown, or press Enter to search manually.
+3. The table will display matched results including Unique Code, Location, Category, Course, and Repayment info.
+
+> ℹ️ For cities listed as NA, type `0` in the **City** box.
 """)
 
 user_selections = {}
-cols = st.columns(3)
+cols = st.columns(2)  # Only 2 input columns now
 
 for i, col in enumerate(input_cols):
     col_values = df[col].dropna().astype(str).unique()
