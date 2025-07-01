@@ -12,7 +12,7 @@ with header_col2:
     st.markdown(
         """
         <div style='padding-left: 15px;'>
-            <h1>🏫 ICICI Bank Ltd-Education Loan</h1>
+            <h1>ICICI Bank Ltd-Education Loan</h1>
             <h3>Institute Category Search</h3>
         </div>
         """, unsafe_allow_html=True
@@ -45,26 +45,7 @@ st.header("🔍 How To Search")
 st.markdown("""
 #### 📝 Steps to Search:
 
-1. **Write Institute Name**, Unique Code, or City in the respective boxes.
-
-2. **Check Suggestions** shown below each box.
-   - If suggestions appear, select the correct one.
-   - If no suggestion appears, your input will be used as-is.
-
-3. You can **fill one or multiple fields** — more fields improve matching accuracy.
-
-4. The table below will show matching institute(s) with:
-   - State / Country
-   - Course / Stream
-   - Category
-   - Repayment Info
-
-5. If no match is found, try:
-   - Typing fewer words
-   - Using simpler spellings
-   - Checking for typos
-
-> ℹ️ For missing cities (like NA), type `0` in the **City** field.
+1. **Write Institute Name**
 """)
 
 user_selections = {}
