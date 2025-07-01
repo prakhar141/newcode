@@ -108,3 +108,22 @@ elif any(user_selections.values()):
     st.warning("⚠️ No matching records found.")
 else:
     st.info("Enter at least one field above to begin your search.")
+# --- Footer ---
+st.markdown("""
+<style>
+.footer {
+    position: fixed;
+    left: 15px;
+    bottom: 10px;
+    font-size: 13px;
+    color: #666;
+    text-align: left;
+}
+</style>
+
+<div class="footer">
+    Developed by Prasoon Mathur<br>
+    Last updated March 31, 2025
+</div>
+""", unsafe_allow_html=True)
+
