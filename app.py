@@ -51,7 +51,6 @@ st.markdown("""
 2. **Select from suggestions** if shown, or press Enter to search manually.
 3. The table will display matched results including Unique Code, Location, Category, Course, and Repayment info.
 
-> ℹ️ For cities listed as NA, type `0` in the **City** box.
 """)
 
 user_selections = {}
