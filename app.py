@@ -6,7 +6,7 @@ from rapidfuzz import process, fuzz
 st.set_page_config(page_title="Institute Finder", layout="wide")
 
 # --- Header ---
-st.title("🏫 Institute Live Search")
+st.title("🏫 ICICI Bank Ltd-Education Loan")
 st.subheader("Institute Category Search")
 
 # --- Load Excel ---
