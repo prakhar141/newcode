@@ -82,14 +82,15 @@ if not filtered.empty and any(user_selections.values()):
     st.success(f"✅ Found {filtered.shape[0]} matching record(s).")
 
     # Add S.No column
-    filtered.insert(0, "S.No", range(1, len(filtered) + 1))
+    if "S.No" not in filtered.columns:
+        filtered.insert(0, "S.No", range(1, len(filtered) + 1))
 
-        if filtered.shape[0] == 1:
+    if filtered.shape[0] == 1:
         st.subheader("🏫 Institute Details")
 
         row = filtered.iloc[0]
 
-        # Build HTML Table
+        # Styling for HTML table
         st.markdown("""
         <style>
             .styled-table {
@@ -121,14 +122,13 @@ if not filtered.empty and any(user_selections.values()):
         <table class='styled-table'>
             <tr><th>🏷️ Unique Code</th><td>{row['Unique Code']}</td></tr>
             <tr><th>🌍 State / Country</th><td>{row['State / Country']}</td></tr>
-            <tr><th>📚 Course / Stream</th><td>{row['Course / Stream'].replace('\n', '<br>')}</td></tr>
+            <tr><th>📚 Course / Stream</th><td>{row['Course / Stream'].replace('\\n', '<br>')}</td></tr>
             <tr><th>🏢 Category</th><td>{row['Category']}</td></tr>
             <tr><th>💰 Partial Simple Interest Repayment</th><td>{row[last_col_name]}</td></tr>
         </table>
         """, unsafe_allow_html=True)
 
     else:
-        # Stylized table output matching image style
         styled_table = filtered[["S.No"] + actual_output_cols].style.set_table_styles([
             {'selector': 'thead', 'props': [('background-color', '#003366'), ('color', 'white'), ('font-weight', 'bold')]},
             {'selector': 'tbody tr:nth-child(even)', 'props': [('background-color', '#f2f2f2')]},
