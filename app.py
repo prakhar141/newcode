@@ -1,59 +1,55 @@
 import streamlit as st
 import pandas as pd
 from rapidfuzz import process, fuzz
+from st_aggrid import AgGrid, GridOptionsBuilder
+import io
 
-# --- Header with spacing using columns and CSS ---
-header_col1, header_col2 = st.columns([0.1, 0.9])  # Adjust as needed
-
+# --- Header Section ---
+header_col1, header_col2 = st.columns([0.1, 0.9])
 with header_col1:
     st.image("bank.png", width=80)
-
 with header_col2:
-    st.markdown(
-        """
+    st.markdown("""
         <div style='padding-left: 15px;'>
-            <h1>ICICI Bank Ltd-Education Loan</h1>
-            <h3>Institute Category Search</h3>
+            <h1 style='margin-bottom:0;'>🏦 ICICI Bank Ltd - Education Loan</h1>
+            <h3 style='margin-top:5px;'>🎓 Institute Category Search</h3>
         </div>
-        """, unsafe_allow_html=True
-    )
+    """, unsafe_allow_html=True)
 
-# --- Load Excel ---
+# --- Load Excel File ---
 @st.cache_data
 def load_data():
     return pd.read_excel("consolidated_institute list.xlsx")
 
 df = load_data()
 
-# --- Input & Output Columns ---
-input_cols = ["Institute name", "City"]  # ✅ Only these are now inputs
-last_col_name = df.columns[-1]  # Repayment column
+# --- Input & Output Setup ---
+input_cols = ["Institute name", "City"]
+last_col_name = df.columns[-1]  # Usually "Repayment"
 
-# ✅ Output includes Unique Code now
 output_col_map = {
-    "Unique Code": "Unique Code",
-    "State / Country": "State / Country",
-    "Course / Stream": "Course / Stream",
-    "Category": "Category",
-    "Repayment": last_col_name
+    "🏷️ Unique Code": "Unique Code",
+    "🌍 State / Country": "State / Country",
+    "📚 Course / Stream": "Course / Stream",
+    "🏢 Category": "Category",
+    "💰 Repayment": last_col_name
 }
 output_cols_ui = list(output_col_map.keys())
 actual_output_cols = [output_col_map[c] for c in output_cols_ui if output_col_map[c] in df.columns]
 
-# --- Live Suggestion Inputs ---
+# --- Instructions ---
 st.header("🔍 How To Search")
-
-# ✅ Instructions block
 st.markdown("""
-#### 📝 Steps to Search:
+#### 📝 Steps:
 
-1. **Write Institute Name** and/or **City** in the input boxes below.
-
+1. Start typing the **Institute Name** or **City**.
+2. Select from the dropdown suggestions.
+3. View the beautifully formatted results below 👇
 """)
 
+# --- Search Inputs ---
 user_selections = {}
-cols = st.columns(2)  # Only 2 input columns now
-
+cols = st.columns(2)
 for i, col in enumerate(input_cols):
     col_values = df[col].dropna().astype(str).unique()
     typed = cols[i].text_input(f"Type {col}:", key=f"{col}_input")
@@ -63,12 +59,7 @@ for i, col in enumerate(input_cols):
         matches = process.extract(typed, col_values, scorer=fuzz.WRatio, limit=10)
         filtered_matches = [m for m, score, _ in matches if score > 60]
         if filtered_matches:
-            suggestion = cols[i].selectbox(
-                f"Suggestions for {col}:", 
-                filtered_matches, 
-                format_func=lambda x: x, 
-                key=f"{col}_suggest"
-            )
+            suggestion = cols[i].selectbox(f"Suggestions for {col}:", filtered_matches, key=f"{col}_suggest")
         else:
             cols[i].info(f"No close matches found for '{typed}', using raw input.")
             suggestion = typed
@@ -86,70 +77,45 @@ for col, val in user_selections.items():
             filtered = filtered.iloc[0:0]
 
 # --- Display Results ---
-from st_aggrid import AgGrid, GridOptionsBuilder, JsCode
-
-# --- Display Results ---
 st.divider()
 st.header("📊 Matching Results")
 
 if not filtered.empty and any(user_selections.values()):
     st.success(f"✅ Found {filtered.shape[0]} matching record(s).")
 
-    # Insert serial numbers
+    # Add S.No.
     filtered.insert(0, "S.No", range(1, len(filtered) + 1))
 
-    # Build AgGrid options
+    # Setup AgGrid
     gb = GridOptionsBuilder.from_dataframe(filtered[["S.No"] + actual_output_cols])
     gb.configure_pagination(paginationAutoPageSize=True)
-    gb.configure_default_column(
-        resizable=True,
-        filter=True,
-        sortable=True,
-        wrapText=True,
-        autoHeight=True
-    )
-
-    # Optional: Color coding for Category
-    if "Category" in actual_output_cols:
-        gb.configure_column(
-            "Category",
-            cellStyle=JsCode("""
-                function(params) {
-                    if (params.value.includes("A")) {
-                        return {backgroundColor: '#D4EFDF'};
-                    } else if (params.value.includes("B")) {
-                        return {backgroundColor: '#FCF3CF'};
-                    } else if (params.value.includes("C")) {
-                        return {backgroundColor: '#FADBD8'};
-                    } else {
-                        return {};
-                    }
-                }
-            """)
-        )
-
-    # Highlight Repayment Column
-    if last_col_name in actual_output_cols:
-        gb.configure_column(
-            last_col_name,
-            headerName="Repayment Info",
-            cellStyle={'color': '#1f77b4', 'fontWeight': 'bold'}
-        )
-
+    gb.configure_default_column(resizable=True, filter=True, sortable=True, wrapText=True, autoHeight=True)
     gridOptions = gb.build()
 
     AgGrid(
         filtered[["S.No"] + actual_output_cols],
         gridOptions=gridOptions,
         height=400,
-        theme='material',  # Choose from: 'streamlit', 'alpine', 'material'
+        theme='alpine',  # themes: streamlit, alpine, material, balham
         fit_columns_on_grid_load=True
+    )
+
+    # --- Export Button ---
+    to_download = filtered[["S.No"] + actual_output_cols]
+    buffer = io.BytesIO()
+    to_download.to_excel(buffer, index=False)
+    st.download_button(
+        label="📥 Download Excel",
+        data=buffer.getvalue(),
+        file_name="matching_results.xlsx",
+        mime="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
     )
 
 elif any(user_selections.values()):
     st.warning("⚠️ No matching records found.")
 else:
-    st.info("Enter at least one field above to begin your search.")
+    st.info("ℹ️ Enter at least one field above to begin your search.")
+
 # --- Footer ---
 st.markdown("""
 <style>
@@ -158,13 +124,12 @@ st.markdown("""
     left: 15px;
     bottom: 10px;
     font-size: 13px;
-    color: #666;
-    text-align: left;
+    color: #888;
 }
 </style>
 
 <div class="footer">
-    Developed by Prasoon Mathur<br>
-    Last updated March 31, 2025
+    Developed by Prasoon Mathur 🧑‍💻<br>
+    Last updated: March 31, 2025
 </div>
 """, unsafe_allow_html=True)
