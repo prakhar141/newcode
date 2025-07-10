@@ -84,24 +84,47 @@ if not filtered.empty and any(user_selections.values()):
     # Add S.No column
     filtered.insert(0, "S.No", range(1, len(filtered) + 1))
 
-    if filtered.shape[0] == 1:
-        st.subheader("🏷️ Institute Summary")
+        if filtered.shape[0] == 1:
+        st.subheader("🏫 Institute Details")
+
         row = filtered.iloc[0]
+
+        # Build HTML Table
+        st.markdown("""
+        <style>
+            .styled-table {
+                border-collapse: collapse;
+                margin: 15px 0;
+                font-size: 16px;
+                width: 100%;
+                background-color: #fdfdfd;
+                box-shadow: 0 0 10px rgba(0,0,0,0.1);
+            }
+            .styled-table td, .styled-table th {
+                padding: 12px 15px;
+                border: 1px solid #ddd;
+            }
+            .styled-table th {
+                background-color: #f4f4f4;
+                text-align: left;
+                font-weight: bold;
+                width: 30%;
+                color: #333;
+            }
+            .styled-table td {
+                color: #222;
+            }
+        </style>
+        """, unsafe_allow_html=True)
+
         st.markdown(f"""
-        <div style='
-            background-color: #f4f4f4;
-            padding: 20px;
-            border-radius: 10px;
-            border: 1px solid #ccc;
-            margin-top: 10px;
-        '>
-            <h4 style='margin-top: 0;'>🏫 Institute Details</h4>
-            <p><strong>Unique Code:</strong> {row['Unique Code']}</p>
-            <p><strong>State / Country:</strong> {row['State / Country']}</p>
-            <p><strong>Course / Stream:</strong><br>{row['Course / Stream'].replace('\n', '<br>')}</p>
-            <p><strong>Category:</strong> {row['Category']}</p>
-            <p><strong>Partial Simple Interest Repayment:</strong> {row[last_col_name]}</p>
-        </div>
+        <table class='styled-table'>
+            <tr><th>🏷️ Unique Code</th><td>{row['Unique Code']}</td></tr>
+            <tr><th>🌍 State / Country</th><td>{row['State / Country']}</td></tr>
+            <tr><th>📚 Course / Stream</th><td>{row['Course / Stream'].replace('\n', '<br>')}</td></tr>
+            <tr><th>🏢 Category</th><td>{row['Category']}</td></tr>
+            <tr><th>💰 Partial Simple Interest Repayment</th><td>{row[last_col_name]}</td></tr>
+        </table>
         """, unsafe_allow_html=True)
 
     else:
