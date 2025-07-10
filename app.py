@@ -11,7 +11,7 @@ with header_col1:
 with header_col2:
     st.markdown("""
         <div style='padding-left: 15px;'>
-            <h1 style='margin-bottom:0;'>🏦 ICICI Bank Ltd - Education Loan</h1>
+            <h1 style='margin-bottom:0;'>ICICI Bank Ltd - Education Loan</h1>
             <h3 style='margin-top:5px;'>🎓 Institute Category Search</h3>
         </div>
     """, unsafe_allow_html=True)
@@ -44,7 +44,6 @@ st.markdown("""
 
 1. Start typing the **Institute Name** or **City**.
 2. Select from the dropdown suggestions.
-3. View the beautifully formatted results below 👇
 """)
 
 # --- Search Inputs ---
