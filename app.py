@@ -1,7 +1,6 @@
 import streamlit as st
 import pandas as pd
 from rapidfuzz import process, fuzz
-from st_aggrid import AgGrid, GridOptionsBuilder
 import io
 
 # --- Header Section ---
@@ -11,8 +10,8 @@ with header_col1:
 with header_col2:
     st.markdown("""
         <div style='padding-left: 15px;'>
-            <h1 style='margin-bottom:0;'>ICICI Bank Ltd - Education Loan</h1>
-            <h3 style='margin-top:5px;'>🎓 Institute Category Search</h3>
+            <h1 style='margin-bottom:0; color: #003366;'>ICICI Bank Ltd - Education Loan</h1>
+            <h3 style='margin-top:5px; color: #444;'>🎓 Institute Category Search</h3>
         </div>
     """, unsafe_allow_html=True)
 
@@ -25,7 +24,7 @@ df = load_data()
 
 # --- Input & Output Setup ---
 input_cols = ["Institute name", "City"]
-last_col_name = df.columns[-1]  # Usually "Repayment"
+last_col_name = df.columns[-1]  # Usually "Repayment" column
 
 output_col_map = {
     "🏷️ Unique Code": "Unique Code",
@@ -44,6 +43,7 @@ st.markdown("""
 
 1. Start typing the **Institute Name** or **City**.
 2. Select from the dropdown suggestions.
+3. View detailed information or export the results.
 """)
 
 # --- Search Inputs ---
@@ -78,34 +78,38 @@ for col, val in user_selections.items():
 # --- Display Results ---
 st.divider()
 st.header("📊 Matching Results")
+
 if not filtered.empty and any(user_selections.values()):
     st.success(f"✅ Found {filtered.shape[0]} matching record(s).")
 
+    # ✅ Add S.No for all cases
+    if "S.No" not in filtered.columns:
+        filtered.insert(0, "S.No", range(1, len(filtered) + 1))
+
+    # --- Single Result: Summary View ---
     if filtered.shape[0] == 1:
         st.subheader("🏷️ Institute Summary")
-
         row = filtered.iloc[0]
+        st.markdown(f"""
+        <div style='
+            background-color: #f9f9f9;
+            padding: 20px;
+            border-radius: 8px;
+            border: 1px solid #eee;
+            margin-top: 10px;
+        '>
+            <h4 style='margin-top: 0;'>🏫 Institute Details</h4>
+            <p><strong>Unique Code:</strong> {row['Unique Code']}</p>
+            <p><strong>State / Country:</strong> {row['State / Country']}</p>
+            <p><strong>Course / Stream:</strong><br>{row['Course / Stream'].replace('\n', '<br>')}</p>
+            <p><strong>Category:</strong> {row['Category']}</p>
+            <p><strong>Partial Simple Interest Repayment:</strong> {row[last_col_name]}</p>
+        </div>
+        """, unsafe_allow_html=True)
 
-        fields = {
-            "Unique Code": row["Unique Code"],
-            "State / Country": row["State / Country"],
-            "Course / Stream": row["Course / Stream"],
-            "Category": row["Category"],
-            "Partial Simple Interest Repayment": row[last_col_name]
-        }
-
-        for label, value in fields.items():
-            st.markdown(f"""
-            <div style='padding: 10px; border-bottom: 1px solid #ddd;'>
-                <strong style='display: inline-block; width: 250px;'>{label}</strong>
-                <span>{value}</span>
-            </div>
-            """, unsafe_allow_html=True)
-
+    # --- Multiple Results: Table View ---
     else:
-        # Multiple results? Show in table/grid format
-        st.dataframe(filtered[actual_output_cols], use_container_width=True)
-
+        st.dataframe(filtered[["S.No"] + actual_output_cols], use_container_width=True)
 
     # --- Export Button ---
     to_download = filtered[["S.No"] + actual_output_cols]
