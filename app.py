@@ -24,7 +24,7 @@ df = load_data()
 
 # --- Input & Output Setup ---
 input_cols = ["Institute name", "City"]
-last_col_name = df.columns[-1]  # Usually "Repayment" column
+last_col_name = df.columns[-1]
 
 output_col_map = {
     "🏷️ Unique Code": "Unique Code",
@@ -40,10 +40,9 @@ actual_output_cols = [output_col_map[c] for c in output_cols_ui if output_col_ma
 st.header("🔍 How To Search")
 st.markdown("""
 #### 📝 Steps:
-
 1. Start typing the **Institute Name** or **City**.
 2. Select from the dropdown suggestions.
-3. View detailed information or export the results.
+3. View results or export them.
 """)
 
 # --- Search Inputs ---
@@ -82,20 +81,18 @@ st.header("📊 Matching Results")
 if not filtered.empty and any(user_selections.values()):
     st.success(f"✅ Found {filtered.shape[0]} matching record(s).")
 
-    # ✅ Add S.No for all cases
-    if "S.No" not in filtered.columns:
-        filtered.insert(0, "S.No", range(1, len(filtered) + 1))
+    # Add S.No column
+    filtered.insert(0, "S.No", range(1, len(filtered) + 1))
 
-    # --- Single Result: Summary View ---
     if filtered.shape[0] == 1:
         st.subheader("🏷️ Institute Summary")
         row = filtered.iloc[0]
         st.markdown(f"""
         <div style='
-            background-color: #f9f9f9;
+            background-color: #f4f4f4;
             padding: 20px;
-            border-radius: 8px;
-            border: 1px solid #eee;
+            border-radius: 10px;
+            border: 1px solid #ccc;
             margin-top: 10px;
         '>
             <h4 style='margin-top: 0;'>🏫 Institute Details</h4>
@@ -107,16 +104,24 @@ if not filtered.empty and any(user_selections.values()):
         </div>
         """, unsafe_allow_html=True)
 
-    # --- Multiple Results: Table View ---
     else:
-        st.dataframe(filtered[["S.No"] + actual_output_cols], use_container_width=True)
+        # Stylized table output matching image style
+        styled_table = filtered[["S.No"] + actual_output_cols].style.set_table_styles([
+            {'selector': 'thead', 'props': [('background-color', '#003366'), ('color', 'white'), ('font-weight', 'bold')]},
+            {'selector': 'tbody tr:nth-child(even)', 'props': [('background-color', '#f2f2f2')]},
+            {'selector': 'tbody tr:hover', 'props': [('background-color', '#e6f7ff')]},
+        ]).set_properties(**{
+            'text-align': 'left',
+            'border': '1px solid #ccc',
+            'padding': '8px',
+        })
+        st.write(styled_table.to_html(escape=False), unsafe_allow_html=True)
 
-    # --- Export Button ---
-    to_download = filtered[["S.No"] + actual_output_cols]
+    # --- Export to Excel ---
     buffer = io.BytesIO()
-    to_download.to_excel(buffer, index=False)
+    filtered[["S.No"] + actual_output_cols].to_excel(buffer, index=False)
     st.download_button(
-        label="📥 Download Excel",
+        label="📥 Download Results as Excel",
         data=buffer.getvalue(),
         file_name="matching_results.xlsx",
         mime="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
