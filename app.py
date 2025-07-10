@@ -78,26 +78,34 @@ for col, val in user_selections.items():
 # --- Display Results ---
 st.divider()
 st.header("📊 Matching Results")
-
 if not filtered.empty and any(user_selections.values()):
     st.success(f"✅ Found {filtered.shape[0]} matching record(s).")
 
-    # Add S.No.
-    filtered.insert(0, "S.No", range(1, len(filtered) + 1))
+    if filtered.shape[0] == 1:
+        st.subheader("🏷️ Institute Summary")
 
-    # Setup AgGrid
-    gb = GridOptionsBuilder.from_dataframe(filtered[["S.No"] + actual_output_cols])
-    gb.configure_pagination(paginationAutoPageSize=True)
-    gb.configure_default_column(resizable=True, filter=True, sortable=True, wrapText=True, autoHeight=True)
-    gridOptions = gb.build()
+        row = filtered.iloc[0]
 
-    AgGrid(
-        filtered[["S.No"] + actual_output_cols],
-        gridOptions=gridOptions,
-        height=400,
-        theme='alpine',  # themes: streamlit, alpine, material, balham
-        fit_columns_on_grid_load=True
-    )
+        fields = {
+            "Unique Code": row["Unique Code"],
+            "State / Country": row["State / Country"],
+            "Course / Stream": row["Course / Stream"],
+            "Category": row["Category"],
+            "Partial Simple Interest Repayment": row[last_col_name]
+        }
+
+        for label, value in fields.items():
+            st.markdown(f"""
+            <div style='padding: 10px; border-bottom: 1px solid #ddd;'>
+                <strong style='display: inline-block; width: 250px;'>{label}</strong>
+                <span>{value}</span>
+            </div>
+            """, unsafe_allow_html=True)
+
+    else:
+        # Multiple results? Show in table/grid format
+        st.dataframe(filtered[actual_output_cols], use_container_width=True)
+
 
     # --- Export Button ---
     to_download = filtered[["S.No"] + actual_output_cols]
