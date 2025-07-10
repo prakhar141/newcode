@@ -140,15 +140,7 @@ if not filtered.empty and any(user_selections.values()):
         })
         st.write(styled_table.to_html(escape=False), unsafe_allow_html=True)
 
-    # --- Export to Excel ---
-    buffer = io.BytesIO()
-    filtered[["S.No"] + actual_output_cols].to_excel(buffer, index=False)
-    st.download_button(
-        label="📥 Download Results as Excel",
-        data=buffer.getvalue(),
-        file_name="matching_results.xlsx",
-        mime="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
-    )
+    
 
 elif any(user_selections.values()):
     st.warning("⚠️ No matching records found.")
