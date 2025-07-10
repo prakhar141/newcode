@@ -86,65 +86,12 @@ for col, val in user_selections.items():
             filtered = filtered.iloc[0:0]
 
 # --- Display Results ---
-from st_aggrid import AgGrid, GridOptionsBuilder, JsCode
-
-# --- Display Results ---
 st.divider()
 st.header("📊 Matching Results")
 
 if not filtered.empty and any(user_selections.values()):
     st.success(f"✅ Found {filtered.shape[0]} matching record(s).")
-
-    # Insert serial numbers
-    filtered.insert(0, "S.No", range(1, len(filtered) + 1))
-
-    # Build AgGrid options
-    gb = GridOptionsBuilder.from_dataframe(filtered[["S.No"] + actual_output_cols])
-    gb.configure_pagination(paginationAutoPageSize=True)
-    gb.configure_default_column(
-        resizable=True,
-        filter=True,
-        sortable=True,
-        wrapText=True,
-        autoHeight=True
-    )
-
-    # Optional: Color coding for Category
-    if "Category" in actual_output_cols:
-        gb.configure_column(
-            "Category",
-            cellStyle=JsCode("""
-                function(params) {
-                    if (params.value.includes("A")) {
-                        return {backgroundColor: '#D4EFDF'};
-                    } else if (params.value.includes("B")) {
-                        return {backgroundColor: '#FCF3CF'};
-                    } else if (params.value.includes("C")) {
-                        return {backgroundColor: '#FADBD8'};
-                    } else {
-                        return {};
-                    }
-                }
-            """)
-        )
-
-    # Highlight Repayment Column
-    if last_col_name in actual_output_cols:
-        gb.configure_column(
-            last_col_name,
-            headerName="Repayment Info",
-            cellStyle={'color': '#1f77b4', 'fontWeight': 'bold'}
-        )
-
-    gridOptions = gb.build()
-
-    AgGrid(
-        filtered[["S.No"] + actual_output_cols],
-        gridOptions=gridOptions,
-        height=400,
-        theme='material',  # Choose from: 'streamlit', 'alpine', 'material'
-        fit_columns_on_grid_load=True
-    )
+    st.dataframe(filtered[actual_output_cols], use_container_width=True)
 
 elif any(user_selections.values()):
     st.warning("⚠️ No matching records found.")
@@ -169,4 +116,4 @@ st.markdown("""
     Last updated March 31, 2025
 </div>
 """, unsafe_allow_html=True)
-
+add these things in it bhai badiya bna de aur zara ye bhi batade ki requirments.txt wale me aur kya daalna hai 
