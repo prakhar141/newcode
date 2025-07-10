@@ -116,4 +116,3 @@ st.markdown("""
     Last updated March 31, 2025
 </div>
 """, unsafe_allow_html=True)
-add these things in it bhai badiya bna de aur zara ye bhi batade ki requirments.txt wale me aur kya daalna hai 
