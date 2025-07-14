@@ -7,7 +7,7 @@ import io
 st.sidebar.title("🔐 Restricted Access")
 password = st.sidebar.text_input("Enter access key", type="password")
 
-if not password.endswith("@icici"):
+if not password.endswith("@icicibank.com"):
     st.error("❌ Unauthorized. Access key must be your organisation e mail id")
     st.stop()
 else:
