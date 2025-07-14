@@ -3,6 +3,16 @@ import pandas as pd
 from rapidfuzz import process, fuzz
 import io
 
+# --- 🔐 Access Control ---
+st.sidebar.title("🔐 Restricted Access")
+password = st.sidebar.text_input("Enter access key", type="password")
+
+if not password.endswith("@icici"):
+    st.error("❌ Unauthorized. Access key must end with '@icici'.")
+    st.stop()
+else:
+    st.success("✅ Access granted!")
+
 # --- Header Section ---
 header_col1, header_col2 = st.columns([0.1, 0.9])
 with header_col1:
@@ -139,8 +149,6 @@ if not filtered.empty and any(user_selections.values()):
             'padding': '8px',
         })
         st.write(styled_table.to_html(escape=False), unsafe_allow_html=True)
-
-    
 
 elif any(user_selections.values()):
     st.warning("⚠️ No matching records found.")
