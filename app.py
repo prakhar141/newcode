@@ -8,7 +8,7 @@ st.sidebar.title("🔐 Restricted Access")
 password = st.sidebar.text_input("Enter access key", type="password")
 
 if not password.endswith("@icici"):
-    st.error("❌ Unauthorized. Access key must end with '@icici'.")
+    st.error("❌ Unauthorized. Access key must be your organisation e mail id")
     st.stop()
 else:
     st.success("✅ Access granted!")
