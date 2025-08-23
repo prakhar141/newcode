@@ -3,15 +3,6 @@ import pandas as pd
 from rapidfuzz import process, fuzz
 import io
 
-# --- 🔐 Access Control ---
-st.sidebar.title("🔐 Restricted Access")
-password = st.sidebar.text_input("Enter access key", type="password")
-
-if not password.endswith("@icicibank.com"):
-    st.error("❌ Unauthorized. Access key must be your organisation e mail id")
-    st.stop()
-else:
-    st.success("✅ Access granted!")
 
 # --- Header Section ---
 header_col1, header_col2 = st.columns([0.1, 0.9])
@@ -172,3 +163,4 @@ st.markdown("""
     Last updated: March 31, 2025
 </div>
 """, unsafe_allow_html=True)
+
